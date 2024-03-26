@@ -1,0 +1,3 @@
+This directory is for the application-specific code for the executable applications
+in the project. For now it will just contain one executable application which is the
+web application. 
