@@ -11,6 +11,10 @@ func main() {
 	// Use the mux.Handle() function to register the file server as the handler for
 	// all URL paths that start with "/static/". For matching paths, we strip the 
 	// "/static" prefix before the request reaches the file server.
+    // if the user search /dab/static/something, the 
+    // stripPrefix will take the /dab/ and replace /static/something with
+    // ./ui/static/something, and join them so that we have
+    // /dab/ui/static/something
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	mux.HandleFunc("/", home)
