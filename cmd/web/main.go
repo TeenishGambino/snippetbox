@@ -1,11 +1,28 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 )
 
 func main() {
+
+	//This is just reading from the terminal, you have to add -addr and value ':portNumber' for it
+	//It's like scanf in C.
+	// Seccond paramter is the default value
+	// The third parameter just describes what the flag is for.
+	addr := flag.String("addr", ":4000", "HTTP Network address")
+	//Flag has Into and Bool, Float64, etc that work similarly, excpet they convert to appropriate types//
+	// Doing go run ./cmd/web -help will return the third parameter and the default value//
+
+	//This does the parsing, and sets the value to addr.
+	// You need to call this before using the variable//
+	flag.Parse()
+
+	// For preexisting variables we could do something like this//
+	// flag.StringVar(&addr, "addr", ":4000", "HTTP network address")
+
 	mux := http.NewServeMux()
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	// Use the mux.Handle() function to register the file server as the handler for
@@ -36,7 +53,9 @@ func main() {
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
-	log.Println("Starting server on :4000")
-	err := http.ListenAndServe(":4000", mux)
+	// You have to dereference the value because the flag parser just has the location of it and not the value itself.
+	// So does that mean parse just keeps in the memory, in a temporary file? It stores it directly in the memory//
+	log.Printf("Starting server on %s", *addr)
+	err := http.ListenAndServe(*addr, mux)
 	log.Fatal(err)
 }
