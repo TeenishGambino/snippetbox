@@ -7,6 +7,18 @@ import (
 	"os"
 )
 
+// This only is good because we have the handlers in the same package
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
+
+//if  you have multiple packages:
+// have a config package that has an application structure like above
+// then you would something similar to below, but instead you would pass the variable inside the paramter
+//Eg: app = &config.Application{...}
+//mux.Handle("/", examplePackage.ExampleHandler(app))
+
 func main() {
 
 	//This is just reading from the terminal, you have to add -addr and value ':portNumber' for it
@@ -31,6 +43,12 @@ func main() {
 
 	// Use log.Llongfile instead of Lshortfile for the full file path//
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	//Dependencies
+	app := &application{
+		errorLog: errorLog,
+		infoLog:  infoLog,
+	}
 
 	mux := http.NewServeMux()
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
@@ -59,9 +77,9 @@ func main() {
 	// And ServeHTTP just calls it.
 
 	// What we do here is just syntatic sugar so that we don't have to keep typing http.HandlerFunction all the time.
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet/view", snippetView)
-	mux.HandleFunc("/snippet/create", snippetCreate)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet/view", app.snippetView)
+	mux.HandleFunc("/snippet/create", app.snippetCreate)
 
 	// We create a new server so that we can customize it
 	//We want to make use of our errorLogger, otherwise the listenAndServe using the default
