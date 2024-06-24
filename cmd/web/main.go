@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -22,6 +23,14 @@ func main() {
 
 	// For preexisting variables we could do something like this//
 	// flag.StringVar(&addr, "addr", ":4000", "HTTP network address")
+
+	// This creates a logger for writing messages that relate to information.
+	//The second parameter is just the prefix
+	// | is a bitwise
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+	// Use log.Llongfile instead of Lshortfile for the full file path//
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	mux := http.NewServeMux()
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
@@ -53,9 +62,18 @@ func main() {
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
+
+	// We create a new server so that we can customize it
+	//We want to make use of our errorLogger, otherwise the listenAndServe using the default
+	srv := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
 	// You have to dereference the value because the flag parser just has the location of it and not the value itself.
 	// So does that mean parse just keeps in the memory, in a temporary file? It stores it directly in the memory//
-	log.Printf("Starting server on %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	infoLog.Printf("Starting server on %s", *addr)
+	err := srv.ListenAndServe()
+	errorLog.Fatal(err)
 }
