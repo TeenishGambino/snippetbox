@@ -1,10 +1,17 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"log"
 	"net/http"
 	"os"
+
+	//The underscore is just an alias because the mysql folder can't be seen by the compiler
+	// the driver's init function will register itslef with the database/sql package
+	// It will happen in run time
+	// So we use the alias.
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // This only is good because we have the handlers in the same package
@@ -29,6 +36,10 @@ func main() {
 	//Flag has Into and Bool, Float64, etc that work similarly, excpet they convert to appropriate types//
 	// Doing go run ./cmd/web -help will return the third parameter and the default value//
 
+	//Define a new command line flag for the MYSQL DSN String
+	//It is the password of the database, may not be the best to have it out in the open like this//
+	dsn := flag.String("dsn", "web:Hallo123@@/snippetbox?parseTime=true", "MySQL data source name")
+
 	//This does the parsing, and sets the value to addr.
 	// You need to call this before using the variable//
 	flag.Parse()
@@ -43,6 +54,18 @@ func main() {
 
 	// Use log.Llongfile instead of Lshortfile for the full file path//
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	// To keep the main() function tidy I've put the code for creating a connection
+	// pool into the separate openDB() function below. We pass openDB() the DSN
+	// from the command-line flag.
+	db, err := openDB(*dsn)
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	// We also defer a call to db.Close(), so that the connection pool is closed
+	// before the main() function exits.
+	defer db.Close()
 
 	//Dependencies
 	app := &application{
@@ -61,6 +84,18 @@ func main() {
 	// You have to dereference the value because the flag parser just has the location of it and not the value itself.
 	// So does that mean parse just keeps in the memory, in a temporary file? It stores it directly in the memory//
 	infoLog.Printf("Starting server on %s", *addr)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
+}
+
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
 }
