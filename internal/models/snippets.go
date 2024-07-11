@@ -23,7 +23,22 @@ type SnippetModel struct {
 
 // Remember this is just like a function in a class
 func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
-	return 0, nil
+	//Double quotes also works if its in a single line, else backmarks can be used for multi lines
+	stmt := `INSERT INTO snippets (title, content, created, expires) 
+	VALUES(?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
+
+	result, err := m.DB.Exec(stmt, title, content, expires)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	// Need to convert because the type that lastInsertId returns is int64.
+	return int(id), nil
 }
 
 func (m *SnippetModel) Get(id int) (*Snippet, error) {
