@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"snippetbox.abiral.net/internal/models"
+
 	//The underscore is just an alias because the mysql folder can't be seen by the compiler
 	// the driver's init function will register itslef with the database/sql package
 	// It will happen in run time
@@ -18,6 +20,7 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *models.SnippetModel
 }
 
 //if  you have multiple packages:
@@ -71,6 +74,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// We create a new server so that we can customize it
