@@ -78,6 +78,9 @@ func (m *SnippetModel) Latest() ([]*Snippet, error) {
 	}
 
 	//We close it after error checking else it will result in an error.
+	// We have to close it else the database connection open.
+	// if not closed, it can rapidly lead to all the connections in your pool being
+	// used up.
 	defer rows.Close()
 
 	snippets := []*Snippet{}
