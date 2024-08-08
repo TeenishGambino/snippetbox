@@ -3,6 +3,7 @@ package main
 import (
 	"html/template"
 	"path/filepath"
+	"time"
 
 	"snippetbox.abiral.net/internal/models"
 )
@@ -30,7 +31,11 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		// 	page,
 		// }
 		// Parse the base template file into a template set.
-		ts, err := template.ParseFiles("./ui/html/base.tmpl.html")
+		// The template.FuncMap must be registered with the template set before you
+		// call the ParseFiles() method. This means we have to use template.New() to
+		// create an empty template set, use the Funcs() method to register the
+		// template.FuncMap, and then parse the file as normal.
+		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl.html")
 		if err != nil {
 			return nil, err
 		}
@@ -52,6 +57,17 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		cache[name] = ts
 	}
 	return cache, nil
+}
+
+// Function that just converts date time to something readable
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
+}
+
+// This is just a string-keyed map which acts as a lookup between the names of
+// our custom template functions and the functions themselves.
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 type templateData struct {
