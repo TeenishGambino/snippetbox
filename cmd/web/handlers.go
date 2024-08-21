@@ -64,17 +64,34 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
-	//No longer needed because the httprouter handles that for us.
-	// if r.Method != http.MethodPost {
-	// 	w.Header().Set("Allow", http.MethodPost)
-	// 	app.clientError(w, http.StatusMethodNotAllowed)
-	// 	return
-	// }
 
-	//This is just dummy data//
-	title := "0 snail"
-	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := 7
+	//To change the max size that a form can return (by default its 10MB)
+	// r.Body = http.MaxButesReader(w, r.Body, size)
+
+	// An easier way to do the following 4 lines is just to use FormValue or PostFormValue
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	//The get just retuns a string, we would have to convert non-string types from strings.
+	// We could have used r.Form instead.
+	// r.PostForm handles POST, PATCH, and PUT, whereas the r.Form accepts all types of requests, and any request body, and query string parameters.//
+
+	//Get returns just the first value of a form field, so checkboxes with multiple options are an issue//
+	// To make it work, we use something like the following//
+
+	// for i, item := range r.PostForm["items"] {
+	// fmt.Fprintf(w, "%d: Item %s\n", i, item)
+	// }
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires, err := strconv.Atoi(r.PostForm.Get("expires"))
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
