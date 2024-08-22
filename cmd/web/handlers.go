@@ -12,10 +12,11 @@ import (
 )
 
 type snippetCreateForm struct {
-	Title   string
-	Content string
-	Expires int
-	validator.Validator
+	Title   string `form:"title"`
+	Content string `form:"content"`
+	Expires int    `form:"expires"`
+	// Tells the decoder to ignore the field//
+	validator.Validator `form:"-`
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -76,12 +77,19 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
-
 	//To change the max size that a form can return (by default its 10MB)
 	// r.Body = http.MaxButesReader(w, r.Body, size)
 
+	var form snippetCreateForm
+
 	// An easier way to do the following 4 lines is just to use FormValue or PostFormValue
-	err := r.ParseForm()
+	// err := r.ParseForm()
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+	// 	return
+	// }
+
+	err := app.decodePostForm(r, &form)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
@@ -97,17 +105,22 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 	// for i, item := range r.PostForm["items"] {
 	// fmt.Fprintf(w, "%d: Item %s\n", i, item)
 	// }
-	expires, err := strconv.Atoi(r.PostForm.Get("expires"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-		return
-	}
+	// expires, err := strconv.Atoi(r.PostForm.Get("expires"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+	// 	return
+	// }
 
-	form := snippetCreateForm{
-		Title:   r.PostForm.Get("title"),
-		Content: r.PostForm.Get("content"),
-		Expires: expires,
-	}
+	// form := snippetCreateForm{
+	// 	Title:   r.PostForm.Get("title"),
+	// 	Content: r.PostForm.Get("content"),
+	// 	Expires: expires,
+	// }
+
+	// err = app.formDecoder.Decode(&form, r.PostForm)
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+	// }
 
 	// Because the Validator type is embedded by the snippetCreateForm struct,
 	// we can call CheckField() directly on it to execute our validation checks.
