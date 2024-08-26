@@ -7,9 +7,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-playground/form/v4"
 	"snippetbox.abiral.net/internal/models"
+
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
 
 	//The underscore is just an alias because the mysql folder can't be seen by the compiler
 	// the driver's init function will register itslef with the database/sql package
@@ -20,11 +24,12 @@ import (
 
 // This only is good because we have the handlers in the same package
 type application struct {
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	snippets      *models.SnippetModel
-	templateCache map[string]*template.Template
-	formDecoder   *form.Decoder
+	errorLog       *log.Logger
+	infoLog        *log.Logger
+	snippets       *models.SnippetModel
+	templateCache  map[string]*template.Template
+	formDecoder    *form.Decoder
+	sessionManager *scs.SessionManager
 }
 
 //if  you have multiple packages:
@@ -81,14 +86,18 @@ func main() {
 	}
 
 	formDecoder := form.NewDecoder()
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
 
 	//Dependencies
 	app := &application{
-		errorLog:      errorLog,
-		infoLog:       infoLog,
-		snippets:      &models.SnippetModel{DB: db},
-		templateCache: templateCache,
-		formDecoder:   formDecoder,
+		errorLog:       errorLog,
+		infoLog:        infoLog,
+		snippets:       &models.SnippetModel{DB: db},
+		templateCache:  templateCache,
+		formDecoder:    formDecoder,
+		sessionManager: sessionManager,
 	}
 
 	// We create a new server so that we can customize it
