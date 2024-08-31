@@ -89,6 +89,7 @@ func main() {
 	sessionManager := scs.New()
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Cookie.Secure = true
 
 	//Dependencies
 	app := &application{
@@ -111,7 +112,7 @@ func main() {
 	// You have to dereference the value because the flag parser just has the location of it and not the value itself.
 	// So does that mean parse just keeps in the memory, in a temporary file? It stores it directly in the memory//
 	infoLog.Printf("Starting server on %s", *addr)
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
 }
 
