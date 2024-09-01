@@ -109,10 +109,13 @@ func main() {
 	// We create a new server so that we can customize it
 	//We want to make use of our errorLogger, otherwise the listenAndServe using the default
 	srv := &http.Server{
-		Addr:      *addr,
-		ErrorLog:  errorLog,
-		Handler:   app.routes(),
-		TLSConfig: tlsConfig,
+		Addr:         *addr,
+		ErrorLog:     errorLog,
+		Handler:      app.routes(),
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	// You have to dereference the value because the flag parser just has the location of it and not the value itself.
