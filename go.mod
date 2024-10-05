@@ -15,5 +15,6 @@ require (
 	//This is used so that we can have a cleaner chaining
 	// Check page 178 of the Let's Go - Alex Edwards for a better explaination//
 	github.com/justinas/alice v1.2.0 // indirect
+	github.com/justinas/nosurf v1.1.1 // indirect
 	golang.org/x/crypto v0.27.0 // indirect
 )
