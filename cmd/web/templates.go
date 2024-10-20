@@ -2,10 +2,12 @@ package main
 
 import (
 	"html/template"
+	"io/fs"
 	"path/filepath"
 	"time"
 
 	"snippetbox.abiral.net/internal/models"
+	"snippetbox.abiral.net/ui"
 )
 
 func newTemplateCache() (map[string]*template.Template, error) {
@@ -15,13 +17,20 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	// match the pattern "./ui/html/pages/*.tmpl.html". This will essentially gives
 	// us a slice of all the filepaths for our application 'page' templates
 	// like: [ui/html/pages/home.tmpl.html ui/html/pages/view.tmpl.html]
-	pages, err := filepath.Glob("./ui/html/pages/*.tmpl.html")
+	// pages, err := filepath.Glob("./ui/html/pages/*.tmpl.html")
+
+	pages, err := fs.Glob(ui.Files, "html/pages/*.tmpl.html")
 	if err != nil {
 		return nil, err
 	}
 
 	for _, page := range pages {
 		name := filepath.Base(page)
+		patterns := []string{
+			"html/base.tmpl.html",
+			"html/partials/*.tmpl.html",
+			page,
+		}
 
 		// Create a slice containing the filepaths for our base template, any
 		// partials and the page.
@@ -35,22 +44,23 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		// call the ParseFiles() method. This means we have to use template.New() to
 		// create an empty template set, use the Funcs() method to register the
 		// template.FuncMap, and then parse the file as normal.
-		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl.html")
+		// ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl.html")
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, patterns...)
 		if err != nil {
 			return nil, err
 		}
 
-		// Call ParseGlob() *on this template set* to add any partials.
-		ts, err = ts.ParseGlob("./ui/html/partials/*.tmpl.html")
-		if err != nil {
-			return nil, err
-		}
+		// // Call ParseGlob() *on this template set* to add any partials.
+		// ts, err = ts.ParseGlob("./ui/html/partials/*.tmpl.html")
+		// if err != nil {
+		// 	return nil, err
+		// }
 
-		// Call ParseFiles() *on this template set* to add the page template.
-		ts, err = ts.ParseFiles(page)
-		if err != nil {
-			return nil, err
-		}
+		// // Call ParseFiles() *on this template set* to add the page template.
+		// ts, err = ts.ParseFiles(page)
+		// if err != nil {
+		// 	return nil, err
+		// }
 
 		// Add the template set to the map, using the name of the page
 		// (like 'home.tmpl') as the key.
@@ -71,11 +81,11 @@ var functions = template.FuncMap{
 }
 
 type templateData struct {
-	CurrentYear int
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
-	Form        any
-	Flash       string
+	CurrentYear     int
+	Snippet         *models.Snippet
+	Snippets        []*models.Snippet
+	Form            any
+	Flash           string
 	IsAuthenticated bool
-	CSRFToken string
+	CSRFToken       string
 }
