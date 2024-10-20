@@ -22,8 +22,7 @@ func (app *application) routes() http.Handler {
 	// mux.HandleFunc("/", app.home)
 	// mux.HandleFunc("/snippet/view", app.snippetView)
 	// mux.HandleFunc("/snippet/create", app.snippetCreate)
-	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf)
-
+	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.authenicate)
 
 	// The ThenFunc returns a handler and not a handlerFunc so we have to change it to .Handler()//
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
