@@ -71,7 +71,11 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 // Function that just converts date time to something readable
 func humanDate(t time.Time) string {
-	return t.Format("02 Jan 2006 at 15:04")
+	if t.IsZero() {
+		return ""
+	}
+
+	return t.UTC().Format("02 Jan 2006 at 15:04")
 }
 
 // This is just a string-keyed map which acts as a lookup between the names of
