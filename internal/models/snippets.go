@@ -14,6 +14,12 @@ type Snippet struct {
 	Expires time.Time
 }
 
+type SnippetModelInterface interface {
+	Insert(title string, content string, expires int) (int, error)
+	Get(id int) (*Snippet, error)
+	Latest() ([]*Snippet, error)
+}
+
 // This just a reference to the database instance
 // Encapsulating the database connection pool within a higher-level of abstraction.
 // sql.DB is just 0 or more connections to the database.
