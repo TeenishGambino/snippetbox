@@ -21,6 +21,9 @@ func (app *application) routes() http.Handler {
 	// router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 	router.Handler(http.MethodGet, "/static/*filepath", fileServer)
 
+	// Add a new GET /ping route.
+	router.HandlerFunc(http.MethodGet, "/ping", ping)
+
 	// mux.HandleFunc("/", app.home)
 	// mux.HandleFunc("/snippet/view", app.snippetView)
 	// mux.HandleFunc("/snippet/create", app.snippetCreate)
