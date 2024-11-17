@@ -13,6 +13,15 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: snippetbox_test
+          MYSQL_ROOT_PASSWORD: testrootpass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 
     steps:
     - uses: actions/checkout@v3
 
@@ -26,3 +35,7 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+    env: 
+      DATABASE_NAME: test_snippetbox
+      DATABASE_PASSWORD: pass
+      DATABASE_ENDPOINT: 127.0.0.1
