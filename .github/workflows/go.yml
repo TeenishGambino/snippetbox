@@ -20,8 +20,8 @@ jobs:
           MYSQL_DATABASE: snippetbox_test
           MYSQL_ROOT_PASSWORD: testrootpass
         ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 
+          - '8888:3306'
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v3
 
@@ -39,4 +39,5 @@ jobs:
       DATABASE_NAME: test_snippetbox
       DATABASE_USERNAME: test_web
       DATABASE_PASSWORD: pass
-      DATABASE_ENDPOINT: 127.0.0.1
+      # This might be bad
+      DATABASE_ENDPOINT: 172.18.0.1
