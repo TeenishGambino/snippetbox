@@ -27,7 +27,7 @@ jobs:
 
     - name: "Mysql Setup"
       run : |
-        mysql -h 127.0.0.1 --port 3306 -u root -ppass -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode-ci;"
+        mysql -h 127.0.0.1 --port 3306 -u root -ppass -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -43,5 +43,3 @@ jobs:
       DATABASE_NAME: test_snippetbox
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: pass
-      # This might be bad
-      DATABASE_ENDPOINT: 172.18.0.1
