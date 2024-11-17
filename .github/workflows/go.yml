@@ -27,7 +27,7 @@ jobs:
 
     - name: "Mysql Setup"
       run : |
-        mysql -h 127.0.0.1 --port 3306 -u root -p pass -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode-ci;"
+        mysql -h 127.0.0.1 --port 3306 -u root -ppass -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode-ci;"
 
     - name: Set up Go
       uses: actions/setup-go@v4
