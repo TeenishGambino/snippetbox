@@ -7,8 +7,10 @@ import (
 )
 
 func newTestDB(t *testing.T) *sql.DB {
-
-	db, err := sql.Open("mysql", "test_web:pass@/test_snippetbox?parseTime=true&multiStatements=true")
+	// This is for docker : test_web:pass@(docker.for.mac.localhost:3306)/test_snippetbox?parseTime=true&multiStatements=true
+	// This is for normal : test_web:pass@/test_snippetbox?parseTime=true&multiStatements=true
+	// Maybe environment variables are better here?
+	db, err := sql.Open("mysql", "test_web:pass@(docker.for.mac.localhost:3306)/test_snippetbox?parseTime=true&multiStatements=true")
 	if err != nil {
 		t.Fatal(err)
 	}
