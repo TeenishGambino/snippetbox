@@ -41,7 +41,7 @@ jobs:
       run: go test -v ./...
     env: 
       DATABASE_NAME: test_snippetbox
-      DATABASE_USERNAME: test_web
+      DATABASE_USERNAME: root
       DATABASE_PASSWORD: pass
       # This might be bad
       DATABASE_ENDPOINT: 172.18.0.1
