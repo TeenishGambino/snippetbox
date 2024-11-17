@@ -124,7 +124,8 @@ func (ts *testServer) postForm(t *testing.T, urlPath string, form url.Values) (i
 }
 
 func newTestDB(t *testing.T) *sql.DB {
-	db, err := sql.Open("mysql", "test_web:pass@(docker.for.mac.localhost:3306)/test_snippetbox?parseTime=try&multiStatements=true")
+	// use test_web for local
+	db, err := sql.Open("mysql", "root:pass@(docker.for.mac.localhost:3306)/test_snippetbox?parseTime=try&multiStatements=true")
 	if err != nil {
 		t.Fatal(err)
 	}
