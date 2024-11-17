@@ -25,6 +25,7 @@ jobs:
     steps:
     - name: "Mysql Setup"
       run : |
+        sudo /etc/init.d/mysql start
         mysql -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode-ci;"
     - uses: actions/checkout@v3
 
