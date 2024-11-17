@@ -36,6 +36,7 @@ jobs:
     - name: Test
       run: go test -v ./...
     env: 
-      DATABASE_NAME: test_web
+      DATABASE_NAME: test_snippetbox
+      DATABASE_USERNAME: test_web
       DATABASE_PASSWORD: pass
       DATABASE_ENDPOINT: 127.0.0.1
