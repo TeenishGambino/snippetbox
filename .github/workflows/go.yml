@@ -27,7 +27,6 @@ jobs:
     - name: "Mysql Setup"
       run : |
         sudo /etc/init.d/mysql start
-        mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_ROOT_PASSWORD }}
 
     - uses: actions/checkout@v3
 
