@@ -13,8 +13,21 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: snippetbox_test
+          MYSQL_ROOT_PASSWORD: pass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v3
+
+    - name: "Mysql Setup"
+      run : |
+        mysql -h 127.0.0.1 --port 3306 -u root -ppass -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -26,3 +39,7 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+    env: 
+      DATABASE_NAME: test_snippetbox
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: pass
