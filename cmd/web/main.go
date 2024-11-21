@@ -25,6 +25,7 @@ import (
 
 // This only is good because we have the handlers in the same package
 type application struct {
+	debug          bool
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	snippets       models.SnippetModelInterface
@@ -47,6 +48,8 @@ func main() {
 	// Seccond paramter is the default value
 	// The third parameter just describes what the flag is for.
 	addr := flag.String("addr", ":4000", "HTTP Network address")
+
+	debug := flag.Bool("debug", false, "To debug")
 	//Flag has Into and Bool, Float64, etc that work similarly, excpet they convert to appropriate types//
 	// Doing go run ./cmd/web -help will return the third parameter and the default value//
 
@@ -95,6 +98,7 @@ func main() {
 
 	//Dependencies
 	app := &application{
+		debug:          *debug,
 		errorLog:       errorLog,
 		infoLog:        infoLog,
 		snippets:       &models.SnippetModel{DB: db},
