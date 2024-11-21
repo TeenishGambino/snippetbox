@@ -31,6 +31,7 @@ func (app *application) routes() http.Handler {
 
 	// The ThenFunc returns a handler and not a handlerFunc so we have to change it to .Handler()//
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
+	router.Handler(http.MethodGet, "/about", dynamic.ThenFunc(app.about))
 	router.Handler(http.MethodGet, "/snippet/view/:id", dynamic.ThenFunc(app.snippetView))
 	// For authentication stuff
 	router.Handler(http.MethodGet, "/user/signup", dynamic.ThenFunc(app.userSignup))
