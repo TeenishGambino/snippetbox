@@ -30,7 +30,7 @@ jobs:
         mysql -h 127.0.0.1 --port 3306 -u root -ppass -e "CREATE DATABASE ${{env.DATABASE_NAME}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: '1.22.1'
 
