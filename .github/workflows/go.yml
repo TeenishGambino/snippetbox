@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:9.2
+        image: mysql:9.3
         env:
           MYSQL_DATABASE: snippetbox_test
           MYSQL_ROOT_PASSWORD: pass
